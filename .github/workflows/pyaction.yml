@@ -2,7 +2,8 @@ name: pyaction
 
 on:
   push:
-
+  schedule:
+    - cron: '55 0 * * *'
 jobs:
   webpdf_to_csv:
     runs-on: ubuntu-latest
