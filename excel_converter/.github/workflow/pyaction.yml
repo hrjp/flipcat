@@ -1,0 +1,23 @@
+name: pyaction
+
+on:
+  workflow_dispatch:
+
+jobs:
+  webpdf_to_csv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+      - name: Get Python version
+        run: python -V
+      - name: Install dependencies
+        run: pip install numpy scipy matplotlib openpyxl pandas tabula tabula-py
+      - name: Install java
+        run: apt install -y default-jre
+      - name: Run Python
+        run: python excel_converter/webget.py
