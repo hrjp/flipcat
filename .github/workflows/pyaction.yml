@@ -3,7 +3,7 @@ name: pyaction
 on:
   schedule:
     - cron: '0 24 * * *'
-  workflow_dispatch:
+  
 
 jobs:
   webpdf_to_csv:
