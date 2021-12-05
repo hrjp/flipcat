@@ -2,9 +2,6 @@ name: pyaction
 
 on:
   push:
-  schedule:
-    - cron: 0 24 * * *
-  
 
 jobs:
   webpdf_to_csv:
