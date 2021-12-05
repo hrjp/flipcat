@@ -23,7 +23,7 @@ jobs:
       - name: Install java
         run: sudo apt update && sudo apt install -y default-jre
       - name: Run Python
-        run: python excel_converter/webget.py
+        run: python webget.py
       - name: CSV commit
         run: |
           git config --global user.email ${{ secrets.EMAIL }}
