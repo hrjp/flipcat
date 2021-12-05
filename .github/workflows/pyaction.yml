@@ -21,6 +21,6 @@ jobs:
       - name: Install dependencies
         run: pip install numpy scipy matplotlib openpyxl pandas tabula tabula-py
       - name: Install java
-        run: apt update && apt install -y default-jre
+        run: sudo apt update && sudo apt install -y default-jre
       - name: Run Python
         run: python excel_converter/webget.py
