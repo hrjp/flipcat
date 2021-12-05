@@ -10,8 +10,8 @@ import re
 import csv
 import tabula
 
-#output_file_path=os.path.dirname(__file__)+"/csv/"
-output_file_path="excel_converter/"
+output_file_path=os.path.dirname(__file__)+"/csv/"
+#output_file_path="csv/"
 def webpdf_to_csv():
     dt_now = datetime.datetime.now()
     month=dt_now.month-1
