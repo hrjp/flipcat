@@ -1,6 +1,7 @@
 name: pyaction
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '55 0 * * *'
 jobs:
