@@ -1,6 +1,7 @@
 name: pyaction
 
 on:
+  push:
   schedule:
     - cron: 0 24 * * *
   
