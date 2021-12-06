@@ -14,7 +14,7 @@ output_file_path=os.path.dirname(__file__)+"/csv/"
 #output_file_path="csv/"
 def webpdf_to_csv():
     dt_now = datetime.datetime.now()
-    month=dt_now.month-1
+    month=dt_now.month
     pdffile_path="http://www.kobe-kosen.ac.jp/groups/coop/coopyotei"+str(month)+".pdf"
 
     condata = tabula.read_pdf(pdffile_path, stream=True,pages="1")
@@ -43,7 +43,7 @@ def webpdf_to_csv():
 
 dt_now = datetime.datetime.now()
 year=dt_now.year
-month=dt_now.month-1
+month=dt_now.month
 #シート選択
 if month<10:
     decade="0"
