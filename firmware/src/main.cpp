@@ -18,8 +18,18 @@ TinyGPSPlus gps;
 CSVread csv;
 
 Servo shop_motor,cafe_motor;
+const int shop_motor_pin=26;
+const int cafe_motor_pin=28;
 const int up_angle=30;
 const int down_angle=150;
+
+Servo action_motor;
+const int action_motor_pin=30;
+const int push_angle=90;
+const int pull_angle=120;
+const int action_interval=1000*3;
+const int move_interval=1000*1;
+
 
 //unix時間に変換
 time_t get_time_t(int year,int month,int day,
@@ -47,8 +57,9 @@ void setup() {
   digitalWrite(13,HIGH);
   Serial.begin(115200);
   Serial1.begin(GPSBaud);
-  shop_motor.attach(26);
-  cafe_motor.attach(28);
+  shop_motor.attach(shop_motor_pin);
+  cafe_motor.attach(cafe_motor_pin);
+  action_motor.attach(action_motor_pin);
 }
 
 void loop() {
@@ -98,6 +109,37 @@ void loop() {
     Serial.print("Shop:CLOSE ");
     shop_motor.write(down_angle);
   }
+
+  //モバイルバッテリーのauto power offの防止
+  static unsigned long pre_t=millis();
+  static unsigned long on_pre_t=millis();
+  static bool action_triger=false;
+  static int seq=0;
+  if((millis()-pre_t)>action_interval){
+    action_triger=true;
+    pre_t=millis();
+  }
+  if(action_triger){
+    seq=1;
+    action_triger=false;
+  }
+  if(seq==1){
+    on_pre_t=millis();
+    seq++;
+    //first move
+    action_motor.write(push_angle);
+  }
+  if(seq==2){
+    if((millis()-on_pre_t)>move_interval){
+      seq++;
+    }
+  }
+  if(seq==3){
+    seq=0;
+    //second move
+    action_motor.write(pull_angle);
+  }
+
 
   //char sz[128];
   //sprintf(sz, "%02d:%02d:%02d:%02d:%02d:%02d ", gps.date.year(),gps.date.month(), gps.date.day(),gps.time.hour(), gps.time.minute(), gps.time.second());
