@@ -15,7 +15,10 @@ output_file_path=os.path.dirname(__file__)+"/csv/"
 def webpdf_to_csv():
     dt_now = datetime.datetime.now()
     month=dt_now.month
-    pdffile_path="http://www.kobe-kosen.ac.jp/groups/coop/coopyotei"+str(month)+".pdf"
+    month_0=""
+    if(month<10):
+        month_0="0"
+    pdffile_path="http://www.kobe-kosen.ac.jp/groups/coop/coopyotei"+month_0+str(month)+".pdf"
 
     condata = tabula.read_pdf(pdffile_path, stream=True,pages="1")
     df=pd.DataFrame(condata[0])
