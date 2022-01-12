@@ -25,9 +25,9 @@ const int down_angle=150;
 
 Servo action_motor;
 const int action_motor_pin=30;
-const int push_angle=90;
+const int push_angle=86;
 const int pull_angle=120;
-const int action_interval=1000*3;
+const long action_interval=1000*20;
 const int move_interval=1000*1;
 
 
