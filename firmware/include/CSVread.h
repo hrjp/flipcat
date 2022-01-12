@@ -33,7 +33,7 @@ bool CSVread::getCSV(const std::string& file_path){
         sd.initErrorHalt(&Serial);
         return false;
     }
-    if (!file.open("202112.csv", FILE_WRITE)) {
+    if (!file.open(file_path.c_str(), FILE_WRITE)) {
         Serial.println("file open failed");
         return false;
     }

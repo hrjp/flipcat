@@ -53,6 +53,7 @@ std::string to_string(auto tostr){
 }
 
 void setup() {
+  delay(2000);
   pinMode(13,OUTPUT);
   digitalWrite(13,HIGH);
   Serial.begin(115200);
@@ -73,85 +74,95 @@ void loop() {
   //time_t gps_time=get_time_t(2021,12,24,7,35,0,9);
   struct std::tm *gps_t;
   gps_t=gmtime(&gps_time);
-  //Serial.println("BBBB");
-  //日付が変化したら新しい営業時間を取得
-  static int pre_day=0;
-  if(pre_day!=gps_t->tm_mday){
-    std::string file_name=to_string(gps_t->tm_year)+to_string(gps_t->tm_mon)+".csv";
-    csv.getCSV(file_name);
-    pre_day=gps_t->tm_mday;
-    Serial.println("csv file loading...");
-    csv.print();
-  }
-
-  //get time
-  time_t cafe_open_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][4].c_str()),atoi(csv.data[gps_t->tm_mday-1][5].c_str()),0,9);
-  time_t cafe_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][6].c_str()),atoi(csv.data[gps_t->tm_mday-1][7].c_str()),0,9);
-  //time_t cafe_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,17,38,0,9);
-  time_t shop_open_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][0].c_str()),atoi(csv.data[gps_t->tm_mday-1][1].c_str()),0,9);
-  time_t shop_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][2].c_str()),atoi(csv.data[gps_t->tm_mday-1][3].c_str()),0,9);
-  //Serial.printf("%d:%d", atoi(csv.data[gps_t->tm_mday-1][2].c_str()),atoi(csv.data[gps_t->tm_mday-1][3].c_str()));
-  
-  if(cafe_open_time<gps_time && gps_time<cafe_close_time){
-    Serial.print("Cafe:OPEN ");
-    cafe_motor.write(up_angle);
-  }
-  else{
-    Serial.print("Cafe:CLOSE ");
-    cafe_motor.write(down_angle);
-  }
-
-  if(shop_open_time<gps_time && gps_time<shop_close_time){
-    Serial.print("Shop:OPEN ");
-    shop_motor.write(up_angle);
-  }
-  else{
-    Serial.print("Shop:CLOSE ");
-    shop_motor.write(down_angle);
-  }
-
-  //モバイルバッテリーのauto power offの防止
-  static unsigned long pre_t=millis();
-  static unsigned long on_pre_t=millis();
-  static bool action_triger=false;
-  static int seq=0;
-  if((millis()-pre_t)>action_interval){
-    action_triger=true;
-    pre_t=millis();
-  }
-  if(action_triger){
-    seq=1;
-    action_triger=false;
-  }
-  if(seq==1){
-    on_pre_t=millis();
-    seq++;
-    //first move
-    action_motor.write(push_angle);
-  }
-  if(seq==2){
-    if((millis()-on_pre_t)>move_interval){
-      seq++;
+  if(gps_t->tm_year+1900>2020){
+    //Serial.println("BBBB");
+    //日付が変化したら新しい営業時間を取得
+    static int pre_day=0;
+    if(pre_day!=gps_t->tm_mday){
+      std::string month_0="";
+      if(gps_t->tm_mon<10){
+        month_0="0";
+      }
+      
+      std::string file_name=to_string(gps_t->tm_year+1900)+month_0+to_string(gps_t->tm_mon+1)+".csv";
+      //file_name="202201.csv";
+      csv.getCSV(file_name);
+      pre_day=gps_t->tm_mday;
+      //Serial.print(file_name.c_str());
+      Serial.print(to_string(gps_t->tm_year+1900).c_str());
+      Serial.println("  csv file loading...");
+      csv.print();
     }
+
+    //get time
+    time_t cafe_open_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][4].c_str()),atoi(csv.data[gps_t->tm_mday-1][5].c_str()),0,9);
+    time_t cafe_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][6].c_str()),atoi(csv.data[gps_t->tm_mday-1][7].c_str()),0,9);
+    //time_t cafe_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,17,38,0,9);
+    time_t shop_open_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][0].c_str()),atoi(csv.data[gps_t->tm_mday-1][1].c_str()),0,9);
+    time_t shop_close_time=get_time_t(gps_t->tm_year+1900,gps_t->tm_mon+1,gps_t->tm_mday,atoi(csv.data[gps_t->tm_mday-1][2].c_str()),atoi(csv.data[gps_t->tm_mday-1][3].c_str()),0,9);
+    //Serial.printf("%d:%d", atoi(csv.data[gps_t->tm_mday-1][2].c_str()),atoi(csv.data[gps_t->tm_mday-1][3].c_str()));
+    
+    if(cafe_open_time<gps_time && gps_time<cafe_close_time){
+      Serial.print("Cafe:OPEN ");
+      cafe_motor.write(up_angle);
+    }
+    else{
+      Serial.print("Cafe:CLOSE ");
+      cafe_motor.write(down_angle);
+    }
+
+    if(shop_open_time<gps_time && gps_time<shop_close_time){
+      Serial.print("Shop:OPEN ");
+      shop_motor.write(up_angle-10);
+    }
+    else{
+      Serial.print("Shop:CLOSE ");
+      shop_motor.write(down_angle);
+    }
+
+    //モバイルバッテリーのauto power offの防止
+    static unsigned long pre_t=millis();
+    static unsigned long on_pre_t=millis();
+    static bool action_triger=false;
+    static int seq=0;
+    if((millis()-pre_t)>action_interval){
+      action_triger=true;
+      pre_t=millis();
+    }
+    if(action_triger){
+      seq=1;
+      action_triger=false;
+    }
+    if(seq==1){
+      on_pre_t=millis();
+      seq++;
+      //first move
+      action_motor.write(push_angle);
+    }
+    if(seq==2){
+      if((millis()-on_pre_t)>move_interval){
+        seq++;
+      }
+    }
+    if(seq==3){
+      seq=0;
+      //second move
+      action_motor.write(pull_angle);
+    }
+
+
+    //char sz[128];
+    //sprintf(sz, "%02d:%02d:%02d:%02d:%02d:%02d ", gps.date.year(),gps.date.month(), gps.date.day(),gps.time.hour(), gps.time.minute(), gps.time.second());
+    //Serial.print(sz);
+
+    char sz2[128];
+    sprintf(sz2, "UNIX TIME:%d %02d:%02d:%02d:%02d:%02d:%02d ", gps_time,gps_t->tm_year+1900,gps_t->tm_mon+1, gps_t->tm_mday,gps_t->tm_hour, gps_t->tm_min, gps_t->tm_sec);
+    Serial.print(sz2);
+
+    //char sz3[128];
+    //sprintf(sz3, "gps:%d cafe:%d-%d shop:%d-%d",gps_time,cafe_open_time,cafe_close_time,shop_open_time,shop_close_time);
+    //Serial.print(sz3);
+
+    Serial.println();
   }
-  if(seq==3){
-    seq=0;
-    //second move
-    action_motor.write(pull_angle);
-  }
-
-
-  //char sz[128];
-  //sprintf(sz, "%02d:%02d:%02d:%02d:%02d:%02d ", gps.date.year(),gps.date.month(), gps.date.day(),gps.time.hour(), gps.time.minute(), gps.time.second());
-  //Serial.print(sz);
-
-  char sz2[128];
-  sprintf(sz2, "UNIX TIME:%d %02d:%02d:%02d:%02d:%02d:%02d ", gps_time,gps_t->tm_year+1900,gps_t->tm_mon+1, gps_t->tm_mday,gps_t->tm_hour, gps_t->tm_min, gps_t->tm_sec);
-  Serial.print(sz2);
-
-  //char sz3[128];
-  //sprintf(sz3, "gps:%d cafe:%d-%d shop:%d-%d",gps_time,cafe_open_time,cafe_close_time,shop_open_time,shop_close_time);
-  //Serial.print(sz3);
-
-  Serial.println();
 }
