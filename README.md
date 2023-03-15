@@ -1,5 +1,5 @@
 # flipcat
-https://kobe-kosen-robotics.org/folder/schedule.html　　　　
+https://kobe-kosen-robotics.org/folder/schedule.html
 
 エンジニアリングデザイン演習
 
